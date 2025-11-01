@@ -1,1 +1,98 @@
+# Joke-Couch — TypeScript + CouchDB starter
+
+This repository provides a minimal TypeScript project configured to run alongside a CouchDB container using Docker Compose. It includes a small example that connects to CouchDB, creates a `jokes` database, and inserts a sample document.
+
+What I added
+
+- `docker-compose.yml` — starts a CouchDB container (binds port 5984).
+- `package.json`, `tsconfig.json` — TypeScript project config and scripts.
+- `src/index.ts` — small example app using `nano` to talk to CouchDB.
+- `.env.example` — env vars for connection.
+- `.devcontainer/devcontainer.json` — starts CouchDB automatically when opening the repository in a Codespace / dev container.
+
+Quick start
+
+1. Copy `.env.example` to `.env` and edit credentials if you want:
+
+	```bash
+	cp .env.example .env
+	# edit .env to change credentials if desired
+	```
+
+2. Start CouchDB with Docker Compose (locally):
+
+	```bash
+	docker compose up -d
+	```
+
+	CouchDB web UI (Fauxton) will be at: http://localhost:5984/_utils/ (use the admin credentials from `.env`).
+
+3. Install dependencies and run the app (locally):
+
+	```bash
+	npm install
+	npm run dev
+	```
+
+	The app will connect to CouchDB, create the `jokes` database (if missing) and insert a sample document.
+
+4. Build and run production bundle:
+
+	```bash
+	npm run build
+	npm start
+	```
+
+Dev Container / Codespaces
+
+If you open this repository in a Codespace or in VS Code using the Dev Containers extension, the devcontainer is configured to start CouchDB automatically.
+
+- The file `.devcontainer/devcontainer.json` runs `npm install` after creation and then runs `docker compose up -d` after the container starts.
+- Ports forwarded from the dev container: `5984` (CouchDB) and `3000` (app, reserved).
+
+What happens when you open the Codespace
+
+1. The dev container image and features are prepared (including Docker-in-Docker feature).
+2. `postCreateCommand` runs `npm install`.
+3. `postStartCommand` runs `docker compose up -d` and starts the `couchdb` service from `docker-compose.yml`.
+
+Troubleshooting
+
+- If the `docker-in-docker` feature cannot be installed or Docker is not available inside the container, `docker compose up -d` will fail. In that case you can run the command manually from the Codespace terminal (see next section).
+- If CouchDB isn't ready yet, check logs with:
+
+  ```bash
+  docker compose logs -f couchdb
+  ```
+
+Manual commands (if the devcontainer hooks fail or you prefer to run locally)
+
+```bash
+# start services
+docker compose up -d
+
+# follow CouchDB logs
+docker compose logs -f couchdb
+
+# stop and remove
+docker compose down
+```
+
+App in Docker Compose (optional)
+
+Currently the repository starts only CouchDB. I can add a `Dockerfile` for the TypeScript app and add an `app` service to `docker-compose.yml` so `docker compose up -d` starts both the app and CouchDB together. Would you like me to add that? If yes, I will also wire the app to wait for CouchDB to be healthy before starting.
+
+Notes
+
+- Default credentials in `.env.example` are `admin` / `password` — change these before exposing to any network.
+- The `nano` client expects the URL to include credentials; you can also set `COUCH_URL` directly.
+
+Next steps (optional)
+
+- Add a small Express REST API (I can implement this now).
+- Add a `Dockerfile` + `app` service to `docker-compose.yml` so both run together.
+- Add CI to run TypeScript build/test on push.
+
+If you want any of the next steps, tell me which and I will implement them.
+
 # Joke-Couch

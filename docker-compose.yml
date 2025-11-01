@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  couchdb:
+    image: couchdb:3.4
+    container_name: couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: "${COUCH_USER:-admin}"
+      COUCHDB_PASSWORD: "${COUCH_PASSWORD:-password}"
+    volumes:
+      - couchdb-data:/opt/couchdb/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+    container_name: joke-couch-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - COUCH_USER=${COUCH_USER}
+      - COUCH_PASSWORD=${COUCH_PASSWORD}
+      - COUCH_HOST=couchdb
+      - COUCH_PORT=5984
+      - PORT=3000
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  couchdb-data:

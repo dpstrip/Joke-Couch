@@ -95,4 +95,35 @@ Next steps (optional)
 
 If you want any of the next steps, tell me which and I will implement them.
 
+Using the CouchDB Explorer VS Code extension
+
+If you'd like to connect with the CouchDB Explorer extension, here's how to add a connection depending on where the extension runs:
+
+- Extension running on your local machine (Compose started on host):
+	- Protocol: HTTP
+	- Host: localhost
+	- Port: 5984
+	- Username: admin
+	- Password: password
+	- Full URL (optional): http://admin:password@localhost:5984/
+
+- Extension running inside the Codespace / devcontainer:
+	- Protocol: HTTP
+	- Host: couchdb
+	- Port: 5984
+	- Username: admin
+	- Password: password
+	- Full URL (optional): http://admin:password@couchdb:5984/
+
+Steps in the extension UI:
+1. Open the CouchDB Explorer extension panel.
+2. Click "Add Connection" (or the + button).
+3. Fill the fields above for the environment you're using.
+4. Save and expand the new connection to see databases (or open Fauxton at http://localhost:5984/_utils/).
+
+Troubleshooting tips
+- If the extension can't connect, verify the container is running and healthy with `docker compose ps` and `docker compose logs -f couchdb`.
+- If you started CouchDB previously without admin credentials and changed `.env` later, recreate the data volume with `docker compose down -v` then `docker compose up -d` so CouchDB initializes with the admin credentials from `.env`.
+
+
 # Joke-Couch

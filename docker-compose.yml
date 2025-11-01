@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   couchdb:
     image: couchdb:3.4
@@ -8,10 +7,12 @@ services:
     environment:
       COUCHDB_USER: "${COUCH_USER:-admin}"
       COUCHDB_PASSWORD: "${COUCH_PASSWORD:-password}"
+    restart: unless-stopped
     volumes:
       - couchdb-data:/opt/couchdb/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5984/ || exit 1"]
+      # use CMD-SHELL because we need shell operators (||)
+      test: ["CMD-SHELL", "curl -f http://localhost:5984/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,10 +25,10 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - COUCH_USER=${COUCH_USER}
-      - COUCH_PASSWORD=${COUCH_PASSWORD}
-      - COUCH_HOST=couchdb
-      - COUCH_PORT=5984
+      - COUCH_USER=${COUCH_USER:-admin}
+      - COUCH_PASSWORD=${COUCH_PASSWORD:-password}
+      - COUCH_HOST=${COUCH_HOST:-couchdb}
+      - COUCH_PORT=${COUCH_PORT:-5984}
       - PORT=3000
     depends_on:
       couchdb:

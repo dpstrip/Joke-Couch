@@ -1,0 +1,124 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Joke Couch API",
+    "version": "0.1.0",
+    "description": "Simple API to store and retrieve jokes backed by CouchDB"
+  },
+  "servers": [
+    { "url": "http://localhost:3000", "description": "Local server" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Health" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jokes": {
+      "get": {
+        "summary": "List jokes",
+        "responses": {
+          "200": {
+            "description": "A list of jokes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Joke" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a joke",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/JokeInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InsertResult" }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/jokes/{id}": {
+      "get": {
+        "summary": "Get a joke by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A joke",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Joke" }
+              }
+            }
+          },
+          "404": { "description": "Not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "properties": { "ok": { "type": "boolean" } }
+      },
+      "Joke": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "_rev": { "type": "string" },
+          "joke": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JokeInput": {
+        "type": "object",
+        "required": ["joke"],
+        "properties": {
+          "joke": { "type": "string" }
+        }
+      },
+      "InsertResult": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "id": { "type": "string" },
+          "rev": { "type": "string" }
+        }
+      }
+    }
+  }
+}

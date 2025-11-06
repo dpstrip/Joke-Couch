@@ -1,11 +1,19 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { initDB } from './db';
+import swaggerUi from 'swagger-ui-express';
+import openapi from './openapi.json';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+// Serve API documentation
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi as any));
+
+// Redirect root to docs
+app.get('/', (_req, res) => res.redirect('/docs'));
 
 const port = Number(process.env.PORT || 3000);
 

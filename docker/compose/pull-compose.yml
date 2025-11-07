@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  couchdb:
+    image: dpstrip/joke-couch-couchdb:latest
+    restart: unless-stopped
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u $${COUCHDB_USER}:$${COUCHDB_PASSWORD} http://localhost:5984/ >/dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    image: dpstrip/joke-couch-api:latest
+    restart: unless-stopped
+    depends_on:
+      - couchdb
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      COUCH_HOST: couchdb
+      COUCH_PORT: 5984
+      COUCH_USER: admin
+      COUCH_PASSWORD: password

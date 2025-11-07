@@ -1,0 +1,14 @@
+{
+  "docs": [
+    {
+      "_id": "sample-joke",
+      "joke": "Why did the scarecrow win an award? Because he was outstanding in his field.",
+      "createdAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "_id": "programmer-joke",
+      "joke": "Why did the programmer quit his job? Because he didn't get arrays.",
+      "createdAt": "2025-11-06T00:00:00.000Z"
+    }
+  ]
+}

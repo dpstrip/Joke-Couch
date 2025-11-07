@@ -1,6 +1,23 @@
 # Joke-Couch — TypeScript + CouchDB starter
 
-This repository provides a minimal TypeScript project configured to run alongside a CouchDB container using Docker Compose. It includes a small example that connects to CouchDB, creates a `jokes` database, and inserts a sample document.
+This repository provides a minimal TypeScript API that uses CouchDB as its datastore. Below is a short reference describing what the important files and folders are and what they do so you can find things quickly.
+
+Files and what they do (quick reference)
+---------------------------------------
+
+- `package.json` — npm scripts and dependencies (build, dev, start).
+- `tsconfig.json` — TypeScript compiler configuration.
+- `src/` — application source code:
+	- `src/server.ts` — Express server with endpoints (`/health`, `/jokes`, `/jokes/:id`, `POST /jokes`).
+	- `src/db.ts` — CouchDB helper (initializes/creates the `jokes` DB using `nano`).
+	- `src/index.ts` — one-off script that inserts a sample joke document.
+- `docker/` — Docker builds and compose helpers:
+	- `docker/couchdb/` — CouchDB seed image (Dockerfile, `init.sh`, `jokes.json`, Docker Hub README).
+	- `docker/api/` — API build Dockerfile (multi-stage) for the production API image.
+	- `docker/compose/pull-compose.yml` — a simple compose file that pulls the prebuilt images from Docker Hub (replace `dpstrip` with your Docker Hub username if needed).
+- `.github/workflows/docker-publish.yml` — GitHub Actions workflow that can build and push the CouchDB image when you push a tag (set secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`).
+
+I also added prebuilt Docker images to Docker Hub for convenience (pushed under `dpstrip`): a seeded CouchDB image and a production API image. See the Docker section further down for run commands.
 
 What I added
 

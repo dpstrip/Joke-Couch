@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import { initDB } from './db';
 import swaggerUi from 'swagger-ui-express';
@@ -7,6 +8,7 @@ import openapi from './openapi.json';
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Serve API documentation

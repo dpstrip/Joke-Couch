@@ -6,7 +6,7 @@
     "description": "Simple API to store and retrieve jokes backed by CouchDB"
   },
   "servers": [
-    { "url": "http://localhost:3000", "description": "Local server" }
+    { "url": "", "description": "Current server" }
   ],
   "paths": {
     "/health": {

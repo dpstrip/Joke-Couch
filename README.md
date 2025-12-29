@@ -29,6 +29,24 @@ What I added
 
 Quick start
 
+**Option 1: Run prebuilt Docker images (recommended for quick setup)**
+
+Pull and run the prebuilt images from Docker Hub using the `pull-compose.yml` file:
+
+```bash
+# Download or copy docker/compose/pull-compose.yml to your machine
+curl -O https://raw.githubusercontent.com/dpstrip/Joke-Couch/main/docker/compose/pull-compose.yml
+
+# Start both CouchDB and API containers
+docker compose -f pull-compose.yml up -d
+```
+
+This will start:
+- CouchDB on port 5984 (seeded with sample jokes)
+- API on port 3000 with Swagger UI at http://localhost:3000/docs
+
+**Option 2: Run locally for development**
+
 1. Copy `.env.example` to `.env` and edit credentials if you want:
 
 	```bash

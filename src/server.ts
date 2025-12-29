@@ -35,6 +35,21 @@ app.get('/jokes', async (_req, res) => {
   }
 });
 
+app.get('/jokes/random', async (_req, res) => {
+  try {
+    const r = await db.list({ include_docs: true });
+    const docs = (r.rows || []).map((r2: any) => r2.doc).filter(Boolean);
+    if (docs.length === 0) {
+      res.status(404).json({ error: 'no jokes available' });
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * docs.length);
+    res.json(docs[randomIndex]);
+  } catch (err) {
+    res.status(500).json({ error: 'failed to fetch random joke', details: String(err) });
+  }
+});
+
 app.get('/jokes/:id', async (req, res) => {
   try {
     const doc = await db.get(req.params.id);

@@ -1,6 +1,7 @@
 services:
   couchdb:
-    image: couchdb:3.4
+    build:
+      context: ./couchdb/docker
     container_name: couchdb
     ports:
       - "5984:5984"
@@ -17,10 +18,10 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
+  api:
     build:
-      context: .
-    container_name: joke-couch-app
+      context: ./api
+    container_name: joke-couch-api
     ports:
       - "3000:3000"
     environment:
@@ -34,6 +35,16 @@ services:
       couchdb:
         condition: service_healthy
     restart: unless-stopped
+
+  # web:
+  #   build:
+  #     context: ./web
+  #   container_name: joke-couch-web
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - api
+  #   restart: unless-stopped
 
 volumes:
   couchdb-data:

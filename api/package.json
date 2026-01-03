@@ -1,8 +1,8 @@
 {
-  "name": "joke-couch",
+  "name": "joke-couch-api",
   "version": "0.1.0",
   "private": true,
-  "description": "Minimal TypeScript project configured to run with a CouchDB Docker container",
+  "description": "Joke Couch API - TypeScript API backed by CouchDB",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",

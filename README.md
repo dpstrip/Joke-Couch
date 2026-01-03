@@ -1,51 +1,76 @@
 # Joke-Couch — TypeScript + CouchDB starter
 
-This repository provides a minimal TypeScript API that uses CouchDB as its datastore. Below is a short reference describing what the important files and folders are and what they do so you can find things quickly.
+This repository provides a minimal TypeScript API that uses CouchDB as its datastore. The project is organized as a monorepo with separate directories for each service.
 
-Files and what they do (quick reference)
----------------------------------------
+## Project Structure
 
-- `package.json` — npm scripts and dependencies (build, dev, start).
-- `tsconfig.json` — TypeScript compiler configuration.
-- `src/` — application source code:
-	- `src/server.ts` — Express server with endpoints (`/health`, `/jokes`, `/jokes/:id`, `POST /jokes`).
-	- `src/db.ts` — CouchDB helper (initializes/creates the `jokes` DB using `nano`).
-	- `src/index.ts` — one-off script that inserts a sample joke document.
-- `docker/` — Docker builds and compose helpers:
-	- `docker/couchdb/` — CouchDB seed image (Dockerfile, `init.sh`, `jokes.json`, Docker Hub README).
-	- `docker/api/` — API build Dockerfile (multi-stage) for the production API image.
-	- `docker/compose/pull-compose.yml` — a simple compose file that pulls the prebuilt images from Docker Hub (replace `dpstrip` with your Docker Hub username if needed).
-- `.github/workflows/docker-publish.yml` — GitHub Actions workflow that can build and push the CouchDB image when you push a tag (set secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`).
+```
+Joke-Couch/
+│
+├── couchdb/
+│   └── docker/          # CouchDB configs, seed data, and scripts
+│       ├── Dockerfile
+│       ├── init.sh
+│       ├── jokes.json
+│       ├── wait-for-couchdb.sh
+│       └── DockerHub-README.md
+│
+├── api/
+│   ├── src/             # API source code
+│   │   ├── server.ts    # Express server with endpoints
+│   │   ├── db.ts        # CouchDB helper
+│   │   ├── index.ts     # Sample data insertion script
+│   │   ├── openapi.json # OpenAPI/Swagger spec
+│   │   └── types/       # TypeScript type definitions
+│   ├── Dockerfile       # API Docker build
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── web/
+│   ├── src/             # Frontend source (to be implemented)
+│   └── Dockerfile       # Web frontend Docker build
+│
+├── docker-compose.yml   # Orchestrates all services
+└── README.md           # This file
+```
 
-I also added prebuilt Docker images to Docker Hub for convenience (pushed under `dpstrip`): a seeded CouchDB image and a production API image. See the Docker section further down for run commands.
+## Files and what they do (quick reference)
 
-What I added
+- **`couchdb/docker/`** — CouchDB seed image configuration:
+	- `Dockerfile` — Custom CouchDB image with seed data
+	- `init.sh` — Initialization script that seeds the database
+	- `jokes.json` — Sample jokes data
+	- `wait-for-couchdb.sh` — Script to wait for CouchDB to be ready
+	- `DockerHub-README.md` — Documentation for the Docker Hub image
 
-- `docker-compose.yml` — starts a CouchDB container (binds port 5984).
-- `package.json`, `tsconfig.json` — TypeScript project config and scripts.
-- `src/index.ts` — small example app using `nano` to talk to CouchDB.
-- `.env.example` — env vars for connection.
-- `.devcontainer/devcontainer.json` — starts CouchDB automatically when opening the repository in a Codespace / dev container.
+- **`api/`** — TypeScript API service:
+	- `src/server.ts` — Express server with endpoints (`/health`, `/jokes`, `/jokes/:id`, `POST /jokes`)
+	- `src/db.ts` — CouchDB helper (initializes/creates the `jokes` DB using `nano`)
+	- `src/index.ts` — Script that inserts a sample joke document
+	- `package.json`, `tsconfig.json` — TypeScript project config
+	- `Dockerfile` — Multi-stage build for production API image
 
-Quick start
+- **`web/`** — Web frontend (placeholder for future implementation)
 
-**Option 1: Run prebuilt Docker images (recommended for quick setup)**
+- **`docker-compose.yml`** — Orchestrates CouchDB, API, and web services
 
-Pull and run the prebuilt images from Docker Hub using the `pull-compose.yml` file:
+## Quick start
+
+**Option 1: Using Docker Compose (recommended)**
+
+Start all services (CouchDB and API):
 
 ```bash
-# Download or copy docker/compose/pull-compose.yml to your machine
-curl -O https://raw.githubusercontent.com/dpstrip/Joke-Couch/main/docker/compose/pull-compose.yml
-
-# Start both CouchDB and API containers
-docker compose -f pull-compose.yml up -d
+docker compose up -d
 ```
 
 This will start:
 - CouchDB on port 5984 (seeded with sample jokes)
 - API on port 3000 with Swagger UI at http://localhost:3000/docs
 
-**Option 2: Run locally for development**
+CouchDB web UI (Fauxton) will be at: http://localhost:5984/_utils/
+
+**Option 2: Run API locally for development**
 
 1. Copy `.env.example` to `.env` and edit credentials if you want:
 
@@ -54,81 +79,75 @@ This will start:
 	# edit .env to change credentials if desired
 	```
 
-2. Start CouchDB with Docker Compose (locally):
+2. Start CouchDB with Docker Compose:
 
 	```bash
-	docker compose up -d
+	docker compose up couchdb -d
 	```
 
-	CouchDB web UI (Fauxton) will be at: http://localhost:5984/_utils/ (use the admin credentials from `.env`).
-
-3. Install dependencies and run the app (locally):
+3. Install dependencies and run the API in development mode:
 
 	```bash
+	cd api
 	npm install
 	npm run dev
 	```
 
-	The app will connect to CouchDB, create the `jokes` database (if missing) and insert a sample document.
+	The API will connect to CouchDB and be available at http://localhost:3000
 
 4. Build and run production bundle:
 
 	```bash
+	cd api
 	npm run build
 	npm start
 	```
 
-Dev Container / Codespaces
+## Dev Container / Codespaces
 
 If you open this repository in a Codespace or in VS Code using the Dev Containers extension, the devcontainer is configured to start CouchDB automatically.
 
-- The file `.devcontainer/devcontainer.json` runs `npm install` after creation and then runs `docker compose up -d` after the container starts.
-- Ports forwarded from the dev container: `5984` (CouchDB) and `3000` (app, reserved).
+- The file `.devcontainer/devcontainer.json` runs `npm install` in the API directory after creation and then runs `docker compose up -d` after the container starts.
+- Ports forwarded from the dev container: `5984` (CouchDB) and `3000` (API).
 
-What happens when you open the Codespace
-
-1. The dev container image and features are prepared (including Docker-in-Docker feature).
-2. `postCreateCommand` runs `npm install`.
-3. `postStartCommand` runs `docker compose up -d` and starts the `couchdb` service from `docker-compose.yml`.
-
-Troubleshooting
-
-- If the `docker-in-docker` feature cannot be installed or Docker is not available inside the container, `docker compose up -d` will fail. In that case you can run the command manually from the Codespace terminal (see next section).
-- If CouchDB isn't ready yet, check logs with:
-
-  ```bash
-  docker compose logs -f couchdb
-  ```
-
-Manual commands (if the devcontainer hooks fail or you prefer to run locally)
+## Manual commands
 
 ```bash
-# start services
+# Start all services
 docker compose up -d
 
-# follow CouchDB logs
+# Start only CouchDB
+docker compose up couchdb -d
+
+# Follow CouchDB logs
 docker compose logs -f couchdb
 
-# stop and remove
+# Follow API logs
+docker compose logs -f api
+
+# Stop and remove all services
 docker compose down
+
+# Rebuild services after code changes
+docker compose up --build
 ```
 
-App in Docker Compose (optional)
-
-Currently the repository starts only CouchDB. I can add a `Dockerfile` for the TypeScript app and add an `app` service to `docker-compose.yml` so `docker compose up -d` starts both the app and CouchDB together. Would you like me to add that? If yes, I will also wire the app to wait for CouchDB to be healthy before starting.
-
-Notes
+## Notes
 
 - Default credentials in `.env.example` are `admin` / `password` — change these before exposing to any network.
 - The `nano` client expects the URL to include credentials; you can also set `COUCH_URL` directly.
+- The new structure separates concerns: CouchDB configuration, API code, and web frontend are in their own directories.
 
-Next steps (optional)
+## API Endpoints
 
-- Add a small Express REST API (I can implement this now).
-- Add a `Dockerfile` + `app` service to `docker-compose.yml` so both run together.
-- Add CI to run TypeScript build/test on push.
+Once running, the API provides the following endpoints:
 
-If you want any of the next steps, tell me which and I will implement them.
+- `GET /health` — Health check
+- `GET /jokes` — List all jokes
+- `GET /jokes/random` — Get a random joke
+- `GET /jokes/:id` — Get a specific joke by ID
+- `POST /jokes` — Create a new joke
+- `GET /docs` — Swagger UI documentation
 
 Using the CouchDB Explorer VS Code extension
 

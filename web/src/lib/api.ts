@@ -15,6 +15,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    console.log(`Making request to: ${url}`);
     
     const response = await fetch(url, {
       headers: {
@@ -24,7 +25,11 @@ class ApiClient {
       ...options,
     });
 
+    console.log(`Response status: ${response.status}`);
+    
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`HTTP error! status: ${response.status}, body: ${errorText}`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

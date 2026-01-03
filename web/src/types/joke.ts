@@ -1,8 +1,10 @@
 export interface Joke {
   _id: string;
   _rev?: string;
-  joke: string;
-  createdAt: string;
+  joke?: string;
+  setup?: string;
+  punchline?: string;
+  createdAt?: string;
 }
 
 export interface JokeInput {

@@ -28,7 +28,9 @@ app.get('/health', (_req, res) => {
 app.get('/jokes', async (_req, res) => {
   try {
     const r = await db.list({ include_docs: true });
-    const docs = (r.rows || []).map((r2: any) => r2.doc).filter(Boolean);
+    const docs = (r.rows || [])
+      .map((r2: any) => r2.doc)
+      .filter((doc: any) => doc && !doc._id.startsWith('_design/'));
     res.json(docs);
   } catch (err) {
     res.status(500).json({ error: 'failed to fetch jokes', details: String(err) });
@@ -38,7 +40,9 @@ app.get('/jokes', async (_req, res) => {
 app.get('/jokes/random', async (_req, res) => {
   try {
     const r = await db.list({ include_docs: true });
-    const docs = (r.rows || []).map((r2: any) => r2.doc).filter(Boolean);
+    const docs = (r.rows || [])
+      .map((r2: any) => r2.doc)
+      .filter((doc: any) => doc && !doc._id.startsWith('_design/'));
     if (docs.length === 0) {
       res.status(404).json({ error: 'no jokes available' });
       return;

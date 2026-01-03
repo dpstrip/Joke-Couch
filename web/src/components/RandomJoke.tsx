@@ -14,11 +14,14 @@ export const RandomJoke: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching random joke...');
       const randomJoke = await apiClient.getRandomJoke();
+      console.log('Successfully got joke:', randomJoke);
       setJoke(randomJoke);
     } catch (err) {
-      setError('Failed to fetch random joke. Please try again.');
-      console.error('Error fetching random joke:', err);
+      console.error('Full error object:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(`Failed to fetch random joke: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

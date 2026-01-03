@@ -2,15 +2,11 @@
 const nextConfig = {
   output: 'standalone',
   async rewrites() {
-    // Determine API URL based on environment
-    const apiUrl = process.env.NODE_ENV === 'production' 
-      ? 'http://api:3000' 
-      : 'http://localhost:3000';
-      
+    // Use the docker service name for server-side proxy
     return [
       {
         source: '/api/:path*',
-        destination: `${apiUrl}/:path*`
+        destination: 'http://joke-couch-api:3000/:path*'
       }
     ];
   },

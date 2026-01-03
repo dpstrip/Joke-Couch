@@ -36,15 +36,17 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # web:
-  #   build:
-  #     context: ./web
-  #   container_name: joke-couch-web
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - api
-  #   restart: unless-stopped
+  web:
+    build:
+      context: ./web
+    container_name: joke-couch-web
+    ports:
+      - "8080:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - api
+    restart: unless-stopped
 
 volumes:
   couchdb-data:

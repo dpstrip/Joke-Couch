@@ -1,14 +1,13 @@
 export interface Joke {
   _id: string;
   _rev?: string;
-  joke?: string;
-  setup?: string;
-  punchline?: string;
-  createdAt?: string;
+  setup: string;
+  punchline: string;
 }
 
 export interface JokeInput {
-  joke: string;
+  setup: string;
+  punchline: string;
 }
 
 export interface ApiResponse<T> {

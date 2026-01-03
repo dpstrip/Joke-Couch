@@ -70,7 +70,6 @@ app.get('/jokes/:id', async (req, res) => {
 app.post('/jokes', async (req, res) => {
   try {
     const data = req.body || {};
-    data.createdAt = new Date().toISOString();
     const insert = await db.insert(data);
     res.status(201).json(insert);
   } catch (err) {

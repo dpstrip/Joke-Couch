@@ -1,8 +1,7 @@
 import { Joke, JokeInput, ApiResponse } from '@/types/joke';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'http://api:3000' 
-  : 'http://localhost:3000';
+// Use Next.js API proxy for all environments
+const API_BASE_URL = '/api';
 
 class ApiClient {
   private baseUrl: string;

@@ -103,6 +103,26 @@ CouchDB web UI (Fauxton) will be at: http://localhost:5984/_utils/
 	npm start
 	```
 
+**Option 3: Run with prebuilt Docker Hub images**
+
+If you have already pulled `dpstrip/joke-couch-* :1.3` images into Docker Desktop (or another host):
+
+	```bash
+	# from the repo root
+	docker pull dpstrip/joke-couch-db:1.3
+	docker pull dpstrip/joke-couch-api:1.3
+	docker pull dpstrip/joke-couch-web:1.3
+
+	# launch the stack using the image-based compose file
+	docker compose -f docker-compose.images.yml up -d
+	```
+
+This uses [docker-compose.images.yml](docker-compose.images.yml), which references the prebuilt images rather than rebuilding from source. After the stack starts:
+
+- CouchDB Fauxton: http://localhost:5984/_utils/
+- API + Swagger UI: http://localhost:3000/docs
+- Web UI: http://localhost:8080
+
 ## Dev Container / Codespaces
 
 If you open this repository in a Codespace or in VS Code using the Dev Containers extension, the devcontainer is configured to start CouchDB automatically.

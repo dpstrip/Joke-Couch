@@ -1,0 +1,49 @@
+services:
+  couchdb:
+    image: dpstrip/joke-couch-db:1.3
+    container_name: couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: "${COUCH_USER:-admin}"
+      COUCHDB_PASSWORD: "${COUCH_PASSWORD:-password}"
+    restart: unless-stopped
+    volumes:
+      - couchdb-data:/opt/couchdb/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5984/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: dpstrip/joke-couch-api:1.3
+    container_name: joke-couch-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - COUCH_USER=${COUCH_USER:-admin}
+      - COUCH_PASSWORD=${COUCH_PASSWORD:-password}
+      - COUCH_HOST=couchdb
+      - COUCH_PORT=5984
+      - PORT=3000
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    image: dpstrip/joke-couch-web:1.3
+    container_name: joke-couch-web
+    ports:
+      - "8080:3000"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://joke-couch-api:3000
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  couchdb-data:

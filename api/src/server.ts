@@ -20,6 +20,7 @@ app.get('/', (_req, res) => res.redirect('/docs'));
 const port = Number(process.env.PORT || 3000);
 
 let db: any;
+let lastRandomJokeId: string | null = null;
 
 app.get('/health', (_req, res) => {
   res.json({ ok: true });
@@ -47,8 +48,18 @@ app.get('/jokes/random', async (_req, res) => {
       res.status(404).json({ error: 'no jokes available' });
       return;
     }
-    const randomIndex = Math.floor(Math.random() * docs.length);
-    res.json(docs[randomIndex]);
+    let randomDoc: any;
+    if (docs.length === 1) {
+      randomDoc = docs[0];
+    } else {
+      // Avoid returning the same joke twice in a row when multiple options exist.
+      do {
+        const randomIndex = Math.floor(Math.random() * docs.length);
+        randomDoc = docs[randomIndex];
+      } while (docs.length > 1 && randomDoc?._id === lastRandomJokeId);
+    }
+    lastRandomJokeId = randomDoc?._id ?? null;
+    res.json(randomDoc);
   } catch (err) {
     res.status(500).json({ error: 'failed to fetch random joke', details: String(err) });
   }

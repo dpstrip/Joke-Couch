@@ -141,15 +141,17 @@
         "properties": {
           "_id": { "type": "string" },
           "_rev": { "type": "string" },
-          "joke": { "type": "string" },
+          "setup": { "type": "string" },
+          "punchline": { "type": "string" },
           "createdAt": { "type": "string", "format": "date-time" }
         }
       },
       "JokeInput": {
         "type": "object",
-        "required": ["joke"],
+        "required": ["setup", "punchline"],
         "properties": {
-          "joke": { "type": "string" }
+          "setup": { "type": "string" },
+          "punchline": { "type": "string" }
         }
       },
       "InsertResult": {

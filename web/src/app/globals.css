@@ -26,6 +26,16 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+input,
+textarea {
+  color: #111827; /* Tailwind gray-900 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280; /* Tailwind gray-500 */
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

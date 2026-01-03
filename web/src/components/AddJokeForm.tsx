@@ -51,7 +51,7 @@ export const AddJokeForm: React.FC<AddJokeFormProps> = ({ onJokeAdded }) => {
             value={setup}
             onChange={(e) => setSetup(e.target.value)}
             placeholder="Enter the setup (e.g., Why did the chicken cross the road?)"
-            className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             rows={2}
             disabled={isSubmitting}
           />
@@ -64,7 +64,7 @@ export const AddJokeForm: React.FC<AddJokeFormProps> = ({ onJokeAdded }) => {
             value={punchline}
             onChange={(e) => setPunchline(e.target.value)}
             placeholder="Enter the punchline (e.g., To get to the other side!)"
-            className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             rows={2}
             disabled={isSubmitting}
           />

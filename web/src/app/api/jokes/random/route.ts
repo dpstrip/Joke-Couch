@@ -7,7 +7,10 @@ export async function GET() {
   console.log('Random joke API route called');
   try {
     console.log(`Fetching from: ${API_BASE_URL}/jokes/random`);
-    const response = await fetch(`${API_BASE_URL}/jokes/random`);
+    const response = await fetch(`${API_BASE_URL}/jokes/random`, {
+      cache: 'no-store',
+      next: { revalidate: 0 }
+    });
     
     if (!response.ok) {
       console.error(`API responded with status: ${response.status}`);

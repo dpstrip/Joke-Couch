@@ -22,6 +22,21 @@ const port = Number(process.env.PORT || 3000);
 let db: any;
 let lastRandomJokeId: string | null = null;
 
+async function updateJoke(id: string, data: any) {
+  // Get the existing document to retrieve its _rev
+  const existing = await db.get(id);
+  
+  // Merge the new data with the existing document
+  const updatedData = {
+    ...data,
+    _id: id,
+    _rev: existing._rev
+  };
+  
+  // Update the document
+  return await db.insert(updatedData);
+}
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
@@ -85,6 +100,19 @@ app.post('/jokes', async (req, res) => {
     res.status(201).json(insert);
   } catch (err) {
     res.status(500).json({ error: 'failed to insert', details: String(err) });
+  }
+});
+
+app.put('/jokes/:id', async (req, res) => {
+  try {
+    const result = await updateJoke(req.params.id, req.body);
+    res.json(result);
+  } catch (err: any) {
+    if (err && err.statusCode === 404) {
+      res.status(404).json({ error: 'joke not found' });
+    } else {
+      res.status(500).json({ error: 'failed to update', details: String(err) });
+    }
   }
 });
 

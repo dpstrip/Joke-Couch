@@ -55,6 +55,13 @@ class ApiClient {
     });
   }
 
+  async updateJoke(id: string, joke: JokeInput): Promise<{ ok: boolean; id: string; rev: string }> {
+    return this.request<{ ok: boolean; id: string; rev: string }>(`/jokes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(joke),
+    });
+  }
+
   async checkHealth(): Promise<{ ok: boolean }> {
     return this.request<{ ok: boolean }>('/health');
   }

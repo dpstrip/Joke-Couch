@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Joke } from '@/types/joke';
 
 interface JokeCardProps {
@@ -16,7 +17,13 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke }) => {
           {joke.punchline}
         </div>
       </div>
-      <div className="flex justify-end items-center text-sm text-gray-500">
+      <div className="flex justify-between items-center text-sm text-gray-500">
+        <Link 
+          href={`/edit/${joke._id}`}
+          className="text-blue-500 hover:text-blue-700 font-medium transition-colors"
+        >
+          ✏️ Update
+        </Link>
         <span>ID: {joke._id}</span>
       </div>
     </div>

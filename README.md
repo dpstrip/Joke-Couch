@@ -128,7 +128,20 @@ This uses [docker-compose.images.yml](docker-compose.images.yml), which referenc
 If you open this repository in a Codespace or in VS Code using the Dev Containers extension, the devcontainer is configured to start CouchDB automatically.
 
 - The file `.devcontainer/devcontainer.json` runs `npm install` in the API directory after creation and then runs `docker compose up -d` after the container starts.
-- Ports forwarded from the dev container: `5984` (CouchDB) and `3000` (API).
+- Ports forwarded from the dev container: `5984` (CouchDB), `3000` (API), and `8080` (Web).
+
+**Accessing the application in Codespaces:**
+
+1. Start the application: `docker compose up -d`
+2. Open the **Ports** panel in VS Code (bottom panel, next to Terminal)
+3. Find port **8080** (web) and right-click it
+4. Select **Port Visibility** → **Public**
+5. Click the globe icon or copy the forwarded URL to access the web app
+6. The URL will be in the format: `https://<codespace-name>-8080.app.github.dev`
+
+Alternatively, use the Simple Browser within VS Code:
+- Press `Ctrl+Shift+P` → "Simple Browser: Show"
+- Enter `http://localhost:8080`
 
 ## Manual commands
 

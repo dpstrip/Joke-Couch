@@ -103,11 +103,9 @@
           },
           "404": { "description": "Not found" }
         }
-      }
-    },
-    "/jokes/{id}": {
-      "get": {
-        "summary": "Get a joke by id",
+      },
+      "put": {
+        "summary": "Update a joke by id",
         "parameters": [
           {
             "name": "id",
@@ -116,16 +114,25 @@
             "schema": { "type": "string" }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/JokeInput" }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "A joke",
+            "description": "Updated successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Joke" }
+                "schema": { "$ref": "#/components/schemas/InsertResult" }
               }
             }
           },
-          "404": { "description": "Not found" }
+          "404": { "description": "Joke not found" },
+          "500": { "description": "Server error" }
         }
       }
     }

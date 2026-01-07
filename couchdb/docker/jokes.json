@@ -1,14 +1,59 @@
 {
   "docs": [
     {
-      "_id": "sample-joke",
-      "setup": "Why did the scarecrow win an award?",
-      "punchline": "Because he was outstanding in his field."
+      "_id": "joke-1",
+      "setup": "Why don't scientists trust atoms?",
+      "punchline": "Because they make up everything."
+    },
+    {
+      "_id": "joke-2",
+      "setup": "Why did the math book look sad?",
+      "punchline": "Because it had too many problems."
+    },
+    {
+      "_id": "joke-3",
+      "setup": "Why do programmers prefer dark mode?",
+      "punchline": "Because light attracts bugs."
+    },
+    {
+      "_id": "joke-4",
+      "setup": "How many tickles does it take to make an octopus laugh?",
+      "punchline": "Ten-tickles."
+    },
+    {
+      "_id": "joke-5",
+      "setup": "Why was the broom late?",
+      "punchline": "It swept in."
+    },
+    {
+      "_id": "3a0187ea7d86057e75ff40a7c4000ae8",
+      "setup": "Why do programmers prefer dark mode?",
+      "punchline": "Because light attracts bugs!"
+    },
+    {
+      "_id": "4d13051b9c54d9722d480162ef000dfc",
+      "setup": "Why do programmers always mix up Halloween and Christmas?",
+      "punchline": "Because Oct 31 = Dec 25."
+    },
+    {
+      "_id": "4d13051b9c54d9722d480162ef001c8d",
+      "setup": "Why did the computer get cold?",
+      "punchline": "Because it forgot to close its Windows."
+    },
+    {
+      "_id": "73517c775539f0d50c0b8e32db0003ab",
+      "setup": "Why don't eggs tell jokes?",
+      "punchline": "Because they'd crack each other up."
     },
     {
       "_id": "programmer-joke",
       "setup": "Why did the programmer quit his job?",
       "punchline": "Because he didn't get arrays."
+    },
+    {
+      "_id": "sample-joke",
+      "setup": "Why did the scarecrow win an award?",
+      "punchline": "Because he was outstanding in his field."
     }
   ]
 }

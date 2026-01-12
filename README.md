@@ -105,13 +105,13 @@ CouchDB web UI (Fauxton) will be at: http://localhost:5984/_utils/
 
 **Option 3: Run with prebuilt Docker Hub images**
 
-If you have already pulled `dpstrip/joke-couch-* :1.3` images into Docker Desktop (or another host):
+If you have already pulled `dpstrip/joke-couch-* :1.4` images into Docker Desktop (or another host):
 
 	```bash
 	# from the repo root
-	docker pull dpstrip/joke-couch-db:1.3
-	docker pull dpstrip/joke-couch-api:1.3
-	docker pull dpstrip/joke-couch-web:1.3
+	docker pull dpstrip/joke-couch-db:1.4
+	docker pull dpstrip/joke-couch-api:1.4
+	docker pull dpstrip/joke-couch-web:1.4
 
 	# launch the stack using the image-based compose file
 	docker compose -f docker-compose.images.yml up -d

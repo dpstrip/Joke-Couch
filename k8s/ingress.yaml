@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: joke-couch-ingress
+  annotations:
+    # Uncomment for nginx ingress controller
+    # kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    
+    # Uncomment for cert-manager with Let's Encrypt
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - host: joke-couch.example.com  # Change this to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: joke-couch-web
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: joke-couch-api
+            port:
+              number: 3000
+      - path: /_utils
+        pathType: Prefix
+        backend:
+          service:
+            name: couchdb
+            port:
+              number: 5984
+  # Uncomment for TLS/HTTPS
+  # tls:
+  # - hosts:
+  #   - joke-couch.example.com
+  #   secretName: joke-couch-tls

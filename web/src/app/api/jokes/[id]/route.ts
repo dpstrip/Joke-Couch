@@ -1,8 +1,14 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This route handler has one responsibility: proxying individual joke requests to the backend API
+
 import { NextRequest, NextResponse } from 'next/server';
 
-// Use localhost for builds, joke-couch-api for Docker runtime
+// SOLID: Open/Closed Principle (OCP)
+// Configuration is open for extension through environment variables
 const API_BASE_URL = process.env.API_URL || 'http://localhost:3000';
 
+// SOLID: Single Responsibility Principle (SRP)
+// Each function handles one HTTP method for a specific resource
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

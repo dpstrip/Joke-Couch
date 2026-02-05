@@ -1,35 +1,21 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This component has one responsibility: displaying a random joke
+// Data fetching is delegated to custom hooks
+
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api';
-import { Joke } from '@/types/joke';
+import React, { useEffect } from 'react';
 import { JokeCard } from './JokeCard';
+import { useRandomJoke } from '@/hooks/useRandomJoke';
 
+// SOLID: Open/Closed Principle (OCP)
+// Component is open for extension through props, closed for modification
 export const RandomJoke: React.FC = () => {
-  const [joke, setJoke] = useState<Joke | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRandomJoke = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      console.log('Fetching random joke...');
-      const randomJoke = await apiClient.getRandomJoke();
-      console.log('Successfully got joke:', randomJoke);
-      setJoke(randomJoke);
-    } catch (err) {
-      console.error('Full error object:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(`Failed to fetch random joke: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { joke, loading, error, fetchRandomJoke } = useRandomJoke();
 
   useEffect(() => {
     fetchRandomJoke();
-  }, []);
+  }, [fetchRandomJoke]);
 
   return (
     <div className="max-w-2xl mx-auto">

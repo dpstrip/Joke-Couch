@@ -1,124 +1,66 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This file's responsibility is to configure and start the Express server
+// Business logic is delegated to services, data access to repositories
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { initDB } from './db';
 import swaggerUi from 'swagger-ui-express';
 import openapi from './openapi.json';
+import { CouchDBAdapter } from './adapters/CouchDBAdapter';
+import { JokeRepository } from './repositories/JokeRepository';
+import { JokeService } from './services/JokeService';
+import { JokeController } from './controllers/JokeController';
 
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Serve API documentation
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi as any));
-
-// Redirect root to docs
-app.get('/', (_req, res) => res.redirect('/docs'));
-
-const port = Number(process.env.PORT || 3000);
-
-let db: any;
-let lastRandomJokeId: string | null = null;
-
-async function updateJoke(id: string, data: any) {
-  // Get the existing document to retrieve its _rev
-  const existing = await db.get(id);
+// SOLID: Dependency Inversion Principle (DIP)
+// We build dependencies from abstractions, injecting them from the composition root
+async function createDependencies() {
+  const db = await initDB('jokes');
+  const dbAdapter = new CouchDBAdapter(db);
+  const jokeRepository = new JokeRepository(dbAdapter);
+  const jokeService = new JokeService(jokeRepository);
+  const jokeController = new JokeController(jokeService);
   
-  // Merge the new data with the existing document
-  const updatedData = {
-    ...data,
-    _id: id,
-    _rev: existing._rev
-  };
-  
-  // Update the document
-  return await db.insert(updatedData);
+  return { jokeController };
 }
 
-app.get('/health', (_req, res) => {
-  res.json({ ok: true });
-});
-
-app.get('/jokes', async (_req, res) => {
-  try {
-    const r = await db.list({ include_docs: true });
-    const docs = (r.rows || [])
-      .map((r2: any) => r2.doc)
-      .filter((doc: any) => doc && !doc._id.startsWith('_design/'));
-    res.json(docs);
-  } catch (err) {
-    res.status(500).json({ error: 'failed to fetch jokes', details: String(err) });
-  }
-});
-
-app.get('/jokes/random', async (_req, res) => {
-  try {
-    const r = await db.list({ include_docs: true });
-    const docs = (r.rows || [])
-      .map((r2: any) => r2.doc)
-      .filter((doc: any) => doc && !doc._id.startsWith('_design/'));
-    if (docs.length === 0) {
-      res.status(404).json({ error: 'no jokes available' });
-      return;
-    }
-    let randomDoc: any;
-    if (docs.length === 1) {
-      randomDoc = docs[0];
-    } else {
-      // Avoid returning the same joke twice in a row when multiple options exist.
-      do {
-        const randomIndex = Math.floor(Math.random() * docs.length);
-        randomDoc = docs[randomIndex];
-      } while (docs.length > 1 && randomDoc?._id === lastRandomJokeId);
-    }
-    lastRandomJokeId = randomDoc?._id ?? null;
-    res.json(randomDoc);
-  } catch (err) {
-    res.status(500).json({ error: 'failed to fetch random joke', details: String(err) });
-  }
-});
-
-app.get('/jokes/:id', async (req, res) => {
-  try {
-    const doc = await db.get(req.params.id);
-    res.json(doc);
-  } catch (err: any) {
-    if (err && err.statusCode === 404) {
-      res.status(404).json({ error: 'not found' });
-    } else {
-      res.status(500).json({ error: 'failed to fetch', details: String(err) });
-    }
-  }
-});
-
-app.post('/jokes', async (req, res) => {
-  try {
-    const data = req.body || {};
-    const insert = await db.insert(data);
-    res.status(201).json(insert);
-  } catch (err) {
-    res.status(500).json({ error: 'failed to insert', details: String(err) });
-  }
-});
-
-app.put('/jokes/:id', async (req, res) => {
-  try {
-    const result = await updateJoke(req.params.id, req.body);
-    res.json(result);
-  } catch (err: any) {
-    if (err && err.statusCode === 404) {
-      res.status(404).json({ error: 'joke not found' });
-    } else {
-      res.status(500).json({ error: 'failed to update', details: String(err) });
-    }
-  }
-});
+// SOLID: Open/Closed Principle (OCP)
+// The application can be extended with new routes/controllers without modifying existing logic
+function setupRoutes(app: express.Application, jokeController: JokeController) {
+  // Health check
+  app.get('/health', (req, res) => jokeController.healthCheck(req, res));
+  
+  // Joke routes
+  app.get('/jokes', (req, res) => jokeController.getAllJokes(req, res));
+  app.get('/jokes/random', (req, res) => jokeController.getRandomJoke(req, res));
+  app.get('/jokes/:id', (req, res) => jokeController.getJokeById(req, res));
+  app.post('/jokes', (req, res) => jokeController.createJoke(req, res));
+  app.put('/jokes/:id', (req, res) => jokeController.updateJoke(req, res));
+}
 
 async function start() {
   try {
-    db = await initDB('jokes');
+    const app = express();
+    const port = Number(process.env.PORT || 3000);
+    
+    // Middleware
+    app.use(cors());
+    app.use(express.json());
+    
+    // API documentation
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi as any));
+    app.get('/', (_req, res) => res.redirect('/docs'));
+    
+    // SOLID: Dependency Inversion Principle (DIP)
+    // Dependencies are created and injected here (composition root)
+    const { jokeController } = await createDependencies();
+    
+    // Setup routes
+    setupRoutes(app, jokeController);
+    
     app.listen(port, () => {
       console.log(`Server listening on port ${port}`);
     });

@@ -1,3 +1,6 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This component has one responsibility: displaying a joke card
+
 import React from 'react';
 import Link from 'next/link';
 import { Joke } from '@/types/joke';
@@ -6,6 +9,10 @@ interface JokeCardProps {
   joke: Joke;
 }
 
+// SOLID: Open/Closed Principle (OCP)
+// Component can be extended through props without modification
+// SOLID: Liskov Substitution Principle (LSP)
+// Can be used anywhere a joke display component is needed
 export const JokeCard: React.FC<JokeCardProps> = ({ joke }) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 m-4 max-w-lg mx-auto border-l-4 border-blue-500">

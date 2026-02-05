@@ -1,12 +1,20 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This component has one responsibility: handling joke creation form
+// API calls are delegated to services
+
 'use client';
 
 import React, { useState } from 'react';
-import { apiClient } from '@/lib/api';
+import { jokeWriteService } from '@/services';
 
 interface AddJokeFormProps {
   onJokeAdded?: () => void;
 }
 
+// SOLID: Open/Closed Principle (OCP)
+// Component is open for extension through props and callbacks
+// SOLID: Dependency Inversion Principle (DIP)
+// Depends on injected callback, not concrete parent implementation
 export const AddJokeForm: React.FC<AddJokeFormProps> = ({ onJokeAdded }) => {
   const [setup, setSetup] = useState('');
   const [punchline, setPunchline] = useState('');
@@ -21,7 +29,7 @@ export const AddJokeForm: React.FC<AddJokeFormProps> = ({ onJokeAdded }) => {
     setMessage(null);
 
     try {
-      await apiClient.createJoke({ 
+      await jokeWriteService.createJoke({ 
         setup: setup.trim(),
         punchline: punchline.trim()
       });

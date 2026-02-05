@@ -1,45 +1,39 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This page has one responsibility: handling the edit joke UI and flow
+// Data fetching and updates are delegated to services and hooks
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { apiClient } from '@/lib/api';
-import { Joke, JokeInput } from '@/types/joke';
+import { JokeInput } from '@/types/joke';
 import Link from 'next/link';
+import { useJoke } from '@/hooks/useJoke';
+import { jokeWriteService } from '@/services';
 
+// SOLID: Open/Closed Principle (OCP)
+// Can be extended with new features without modifying existing functionality
 export default function EditJokePage() {
   const router = useRouter();
   const params = useParams();
   const jokeId = params.id as string;
 
-  const [joke, setJoke] = useState<Joke | null>(null);
+  // SOLID: Single Responsibility Principle (SRP)
+  // Data fetching delegated to custom hook
+  const { joke, loading, error: loadError } = useJoke(jokeId);
+  
   const [setup, setSetup] = useState('');
   const [punchline, setPunchline] = useState('');
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const loadJoke = async () => {
-      try {
-        setLoading(true);
-        const jokeData = await apiClient.getJoke(jokeId);
-        setJoke(jokeData);
-        setSetup(jokeData.setup);
-        setPunchline(jokeData.punchline);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load joke. Please try again.');
-        console.error('Error loading joke:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (jokeId) {
-      loadJoke();
+    if (joke) {
+      setSetup(joke.setup);
+      setPunchline(joke.punchline);
     }
-  }, [jokeId]);
+  }, [joke]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +52,7 @@ export default function EditJokePage() {
         punchline: punchline.trim(),
       };
 
-      await apiClient.updateJoke(jokeId, jokeInput);
+      await jokeWriteService.updateJoke(jokeId, jokeInput);
       setSuccess(true);
       
       // Redirect back to home after a short delay

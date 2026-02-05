@@ -1,3 +1,7 @@
+// SOLID: Single Responsibility Principle (SRP)
+// This page has one responsibility: coordinating the main navigation and tab switching
+// Each tab's functionality is delegated to dedicated components
+
 'use client';
 
 import React, { useState } from 'react';
@@ -7,10 +11,14 @@ import { JokeList } from '@/components/JokeList';
 
 type Tab = 'random' | 'all' | 'add';
 
+// SOLID: Open/Closed Principle (OCP)
+// Can be extended with new tabs without modifying existing code
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('random');
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // SOLID: Dependency Inversion Principle (DIP)
+  // Components depend on callback abstractions, not concrete implementations
   const handleJokeAdded = () => {
     // Force refresh of the joke list by changing key
     setRefreshKey(prev => prev + 1);
